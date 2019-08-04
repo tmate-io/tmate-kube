@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session
+  labels:
+    app: session
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session
+  template:
+    metadata:
+      labels:
+        app: session
+    spec:
+      # XXX Explain why we picked this terrible option.
+      hostNetwork: true
+      volumes:
+      - name: secret-ssh-keys
+        secret:
+          secretName: ssh-keys
+      - name: secret-ssl-cert
+        secret:
+          secretName: ssl-cert
+      - name: tmate-unix-sockets
+        emptyDir: {}
+      containers:
+      - name: tmate-ssh-server
+        image: tmate/tmate-ssh-server:latest
+        securityContext:
+          capabilities:
+            add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
+        env:
+        - name: USE_PROXY
+          value: "1"
+        - name: SSH_PORT
+          value: "22"
+        - name: SSH_KEYS_PATH
+          value: /etc/tmate-keys
+        - name: SSH_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: hostname
+        ports:
+        - containerPort: 22
+          name: ssh
+        volumeMounts:
+        - name: secret-ssh-keys
+          mountPath: /etc/tmate-keys
+        - name: tmate-unix-sockets
+          mountPath: /tmp/tmate/sessions
+      - name: tmate-proxy
+        image: tmate/tmate-proxy:latest
+        env:
+        - name: DAEMON_HMAC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: hmac-key
+        - name: SSL_KEY_FILE
+          value: /etc/ssl/tmate/ssl.key
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/tmate/ssl.crt
+        - name: SSL_CACERT_FILE
+          value: /etc/ssl/tmate/ssl.ca-bundle
+        - name: WEBSOCKET_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: hostname
+        - name: WEBSOCKET_PORT
+          value: "443"
+        - name: MASTER_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: master_base_url
+        - name: ERL_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ERL_MASTER_NODES
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: erl_master_nodes
+        - name: ERL_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: erl-cookie
+        ports:
+        - containerPort: 443
+          name: websocket
+        - containerPort: 4002
+          name: daemon
+        volumeMounts:
+        - name: secret-ssl-cert
+          mountPath: /etc/ssl/tmate
+        - name: tmate-unix-sockets
+          mountPath: /tmp/tmate/sessions
+# ---
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: session
+# # annotations:
+#   # proxy protocol not implemented, but that's a way to get the
+#   # real client IP.
+#   # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+# spec:
+#   selector:
+#     app: session
+#   type: LoadBalancer
+#   # The sourceIP does not seem to be correct, event with this in place,
+#   # event when hitting the nodeport directly.
+#   externalTrafficPolicy: Local
+#   ports:
+#   - name: ssh
+#     port: 22
+#     nodePort: 30022
+#     targetPort: ssh
+#   - name: websocket
+#     port: 443
+#     nodePort: 30443
+#     targetPort: websocket

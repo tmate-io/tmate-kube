@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session
+  labels:
+    app: session
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session
+  template:
+    metadata:
+      labels:
+        app: session
+    spec:
+      volumes:
+      - name: secret-ssh-keys
+        secret:
+          secretName: ssh-keys
+      - name: tmate-unix-sockets
+        emptyDir: {}
+      containers:
+      - name: tmate-ssh-server
+        image: tmate/tmate-ssh-server:latest
+        securityContext:
+          capabilities:
+            add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
+        env:
+        - name: USE_PROXY
+          value: "1"
+        - name: SSH_KEYS_PATH
+          value: /etc/tmate-keys
+        - name: SSH_HOSTNAME
+          value: localhost
+        ports:
+        - containerPort: 2200
+          name: ssh
+        volumeMounts:
+        - name: secret-ssh-keys
+          mountPath: /etc/tmate-keys
+        - name: tmate-unix-sockets
+          mountPath: /tmp/tmate/sessions
+      - name: tmate-proxy
+        image: tmate/tmate-proxy:latest
+        ports:
+          - containerPort: 4001
+            name: websocket
+          - containerPort: 4002
+            name: daemon
+        volumeMounts:
+          - name: tmate-unix-sockets
+            mountPath: /tmp/tmate/sessions
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: session
+spec:
+  selector:
+    app: session
+  ports:
+  - name: ssh
+    port: 22
+    targetPort: ssh
+  - name: websocket
+    port: 4001
+    targetPort: websocket

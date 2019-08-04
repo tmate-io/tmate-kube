@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master
+  labels:
+    app: master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master
+  template:
+    metadata:
+      labels:
+        app: master
+    spec:
+      containers:
+      - name: tmate-master
+        image: tmate/tmate-master:latest
+        ports:
+        - containerPort: 4000
+          name: http
+        - containerPort: 4080
+          name: http-static
+        - containerPort: 4369
+          name: epmd
+        - containerPort: 20000
+          name: erlnode
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: erlmaster
+spec:
+  selector:
+    app: master
+  ports:
+  - name: epmd
+    port: 4369
+    targetPort: 4369
+  - name: erlnode
+    port: 20000
+    targetPort: 20000
