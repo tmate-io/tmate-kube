@@ -51,11 +51,12 @@ spec:
         securityContext:
           capabilities:
             add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
+        args: ['-v']
         env:
+        - name: USE_PROXY_PROTOCOL
+          value: "1"
         - name: HAS_WEBSOCKET
           value: "1"
-        - name: SSH_PORT
-          value: "22"
         - name: SSH_KEYS_PATH
           value: /etc/tmate-keys
         - name: SSH_HOSTNAME
@@ -64,7 +65,7 @@ spec:
               name: config
               key: hostname
         ports:
-        - containerPort: 22
+        - containerPort: 2200
           name: ssh
         volumeMounts:
         - name: secret-ssh-keys
@@ -85,13 +86,13 @@ spec:
           value: /etc/ssl/tmate/ssl.crt
         - name: SSL_CACERT_FILE
           value: /etc/ssl/tmate/ssl.ca-bundle
+        - name: USE_PROXY_PROTOCOL
+          value: "1"
         - name: WEBSOCKET_HOSTNAME
           valueFrom:
             configMapKeyRef:
               name: config
               key: hostname
-        - name: WEBSOCKET_PORT
-          value: "443"
         - name: MASTER_BASE_URL
           valueFrom:
             configMapKeyRef:
@@ -112,7 +113,7 @@ spec:
               name: misc
               key: erl-cookie
         ports:
-        - containerPort: 443
+        - containerPort: 4001
           name: websocket
         - containerPort: 4002
           name: daemon
@@ -126,8 +127,9 @@ kind: Service
 apiVersion: v1
 metadata:
   name: session
-# annotations:
-  # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
 spec:
   selector:
     app: session
