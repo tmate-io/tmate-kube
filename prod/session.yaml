@@ -1,3 +1,24 @@
+# For networking, we want to users to be connect to the server via port 22
+# (ssh), and port 443 (websockets). These connections are latency sensitive.
+# We also want the servers to be able to know the user's IP.
+# We'd like to have one session server in a few datacenters to provide low
+# latency around the globe.
+#
+# We have a few options:
+# 1) Use a load balancer. Because we are using SSH, we can't have a special
+#    Client IP header. So we need to use the "PROXY protocol", which many load
+#    balancers support. We have to write a bit of code to support the PROXY
+#    protocol. This also increases the bill for each datacenter we want to
+#    have a presence on.
+# 2) Using a public IP on the node, and hostPort. Unfortunately, the SSH server
+#    does not see the Client IP as connections are getting NATed.
+# 3) Using a public IP on the node, and hostNetwork: true. This works, but
+#    we have to relocate the port of the node's OpenSSH server on the machine.
+#
+# Using the node's public IP is not great as it's likely that things will go
+# sour when doing k8s upgrades. Nodes may get recycled, etc.
+# We'll go with option 1) to avoid hassles.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,8 +35,7 @@ spec:
       labels:
         app: session
     spec:
-      # XXX Explain why we picked this terrible option.
-      hostNetwork: true
+      terminationGracePeriodSeconds: 5
       volumes:
       - name: secret-ssh-keys
         secret:
@@ -32,7 +52,7 @@ spec:
           capabilities:
             add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
         env:
-        - name: USE_PROXY
+        - name: HAS_WEBSOCKET
           value: "1"
         - name: SSH_PORT
           value: "22"
@@ -51,8 +71,8 @@ spec:
           mountPath: /etc/tmate-keys
         - name: tmate-unix-sockets
           mountPath: /tmp/tmate/sessions
-      - name: tmate-proxy
-        image: tmate/tmate-proxy:latest
+      - name: tmate-websocket
+        image: tmate/tmate-websocket:latest
         env:
         - name: DAEMON_HMAC_KEY
           valueFrom:
@@ -101,28 +121,21 @@ spec:
           mountPath: /etc/ssl/tmate
         - name: tmate-unix-sockets
           mountPath: /tmp/tmate/sessions
-# ---
-# kind: Service
-# apiVersion: v1
-# metadata:
-#   name: session
-# # annotations:
-#   # proxy protocol not implemented, but that's a way to get the
-#   # real client IP.
-#   # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-# spec:
-#   selector:
-#     app: session
-#   type: LoadBalancer
-#   # The sourceIP does not seem to be correct, event with this in place,
-#   # event when hitting the nodeport directly.
-#   externalTrafficPolicy: Local
-#   ports:
-#   - name: ssh
-#     port: 22
-#     nodePort: 30022
-#     targetPort: ssh
-#   - name: websocket
-#     port: 443
-#     nodePort: 30443
-#     targetPort: websocket
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: session
+# annotations:
+  # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+spec:
+  selector:
+    app: session
+  type: LoadBalancer
+  ports:
+  - name: ssh
+    port: 22
+    targetPort: ssh
+  - name: websocket
+    port: 443
+    targetPort: websocket

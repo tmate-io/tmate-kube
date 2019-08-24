@@ -27,7 +27,7 @@ spec:
           capabilities:
             add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
         env:
-        - name: USE_PROXY
+        - name: HAS_WEBSOCKET
           value: "1"
         - name: SSH_KEYS_PATH
           value: /etc/tmate-keys
@@ -41,8 +41,8 @@ spec:
           mountPath: /etc/tmate-keys
         - name: tmate-unix-sockets
           mountPath: /tmp/tmate/sessions
-      - name: tmate-proxy
-        image: tmate/tmate-proxy:latest
+      - name: tmate-websocket
+        image: tmate/tmate-websocket:latest
         ports:
           - containerPort: 4001
             name: websocket

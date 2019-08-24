@@ -16,12 +16,12 @@ docker_build('tmate/tmate-ssh-server', '../../tmate-ssh-server',
                           restart_container()]
 )
 
-docker_build('tmate/tmate-proxy', '../../tmate-proxy',
-             dockerfile='../../tmate-proxy/Dockerfile.dev',
+docker_build('tmate/tmate-websocket', '../../tmate-websocket',
+             dockerfile='../../tmate-websocket/Dockerfile.dev',
              live_update=[fall_back_on(['../../tmate-master/config',
-                                        '../../tmate-proxy/mix.exs',
-                                        '../../tmate-proxy/mix.lock']),
-                          sync('../../tmate-proxy', '/src/tmate-proxy'),
+                                        '../../tmate-websocket/mix.exs',
+                                        '../../tmate-websocket/mix.lock']),
+                          sync('../../tmate-websocket', '/src/tmate-websocket'),
                           run('echo recompile >> console')]
 )
 
