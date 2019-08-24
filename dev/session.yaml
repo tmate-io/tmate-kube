@@ -51,18 +51,3 @@ spec:
         volumeMounts:
           - name: tmate-unix-sockets
             mountPath: /tmp/tmate/sessions
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: session
-spec:
-  selector:
-    app: session
-  ports:
-  - name: ssh
-    port: 22
-    targetPort: ssh
-  - name: websocket
-    port: 4001
-    targetPort: websocket

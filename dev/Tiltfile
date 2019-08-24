@@ -18,7 +18,7 @@ docker_build('tmate/tmate-ssh-server', '../../tmate-ssh-server',
 
 docker_build('tmate/tmate-websocket', '../../tmate-websocket',
              dockerfile='../../tmate-websocket/Dockerfile.dev',
-             live_update=[fall_back_on(['../../tmate-master/config',
+             live_update=[fall_back_on(['../../tmate-websocket/config',
                                         '../../tmate-websocket/mix.exs',
                                         '../../tmate-websocket/mix.lock']),
                           sync('../../tmate-websocket', '/src/tmate-websocket'),
