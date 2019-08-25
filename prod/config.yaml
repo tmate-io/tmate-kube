@@ -3,6 +3,7 @@ apiVersion: v1
 metadata:
   name: config
 data:
-  hostname: nyc3.tmate.io
-  master_base_url: "https://tmate.io"
+  hostname: "nyc3.tmate.io"
+  websocket_base_url: "wss://nyc3.tmate.io/"
+  master_base_url: "https://tmate.io/"
   erl_master_nodes: ""

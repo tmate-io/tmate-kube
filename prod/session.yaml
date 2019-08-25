@@ -82,11 +82,11 @@ spec:
               key: hmac-key
         - name: USE_PROXY_PROTOCOL
           value: "1"
-        - name: WEBSOCKET_HOSTNAME
+        - name: WEBSOCKET_BASE_URL
           valueFrom:
             configMapKeyRef:
               name: config
-              key: hostname
+              key: websocket_base_url
         - name: MASTER_BASE_URL
           valueFrom:
             configMapKeyRef:
