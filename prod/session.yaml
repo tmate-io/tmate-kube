@@ -80,12 +80,6 @@ spec:
             secretKeyRef:
               name: misc
               key: hmac-key
-        - name: SSL_KEY_FILE
-          value: /etc/ssl/tmate/ssl.key
-        - name: SSL_CERT_FILE
-          value: /etc/ssl/tmate/ssl.crt
-        - name: SSL_CACERT_FILE
-          value: /etc/ssl/tmate/ssl.ca-bundle
         - name: USE_PROXY_PROTOCOL
           value: "1"
         - name: WEBSOCKET_HOSTNAME
@@ -114,7 +108,7 @@ spec:
               key: erl-cookie
         ports:
         - containerPort: 4001
-          name: websocket
+          name: http
         - containerPort: 4002
           name: daemon
         volumeMounts:
@@ -130,6 +124,8 @@ metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: c6e6bf23-5a0e-4c9b-8fde-bb32106cb6be
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
 spec:
   selector:
     app: session
@@ -138,6 +134,6 @@ spec:
   - name: ssh
     port: 22
     targetPort: ssh
-  - name: websocket
+  - name: https
     port: 443
-    targetPort: websocket
+    targetPort: http
