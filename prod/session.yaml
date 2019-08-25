@@ -16,8 +16,8 @@
 #    we have to relocate the port of the node's OpenSSH server on the machine.
 #
 # Using the node's public IP is not great as it's likely that things will go
-# sour when doing k8s upgrades. Nodes may get recycled, etc.
-# We'll go with option 1) to avoid hassles.
+# sour when doing k8s upgrades. Nodes may get recycled. Relocating the
+# host SSH server is also a PITA. So We'll go with option 1) to avoid hassles.
 
 apiVersion: apps/v1
 kind: Deployment

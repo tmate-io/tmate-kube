@@ -51,3 +51,11 @@ spec:
         volumeMounts:
           - name: tmate-unix-sockets
             mountPath: /tmp/tmate/sessions
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: testmaster
+spec:
+  type: ExternalName
+  externalName: ssh.tmate.io
