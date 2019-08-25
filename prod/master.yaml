@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master
+  labels:
+    app: master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master
+  template:
+    metadata:
+      labels:
+        app: master
+    spec:
+      containers:
+      - name: tmate-master
+        image: tmate/tmate-master:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: MASTER_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: hostname
+        - name: MASTER_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: master_base_url
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: secret-key-base
+        - name: ERL_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ERL_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: erl-cookie
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: master
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: 94641cff-a3fa-4baa-ae57-5045142307c2
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
+spec:
+  selector:
+    app: master
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  - name: https
+    port: 443
+    targetPort: http
