@@ -18,14 +18,9 @@ spec:
       - name: tmate-master
         image: tmate/tmate-master:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 4000
           name: http
         env:
-        - name: MASTER_HOSTNAME
-          valueFrom:
-            configMapKeyRef:
-              name: config
-              key: hostname
         - name: MASTER_BASE_URL
           valueFrom:
             configMapKeyRef:
