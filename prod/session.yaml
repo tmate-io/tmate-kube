@@ -92,15 +92,15 @@ spec:
             configMapKeyRef:
               name: config
               key: master_base_url
+        - name: MASTER_WSAPI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: wsapi-key
         - name: ERL_NODE_NAME
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        - name: ERL_MASTER_NODES
-          valueFrom:
-            configMapKeyRef:
-              name: config
-              key: erl_master_nodes
         - name: ERL_COOKIE
           valueFrom:
             secretKeyRef:

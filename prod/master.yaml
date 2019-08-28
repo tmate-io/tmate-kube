@@ -33,6 +33,11 @@ spec:
               key: secret-key-base
         - name: USE_PROXY_PROTOCOL
           value: "1"
+        - name: MASTER_WSAPI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: misc
+              key: wsapi-key
         - name: ERL_NODE_NAME
           valueFrom:
             fieldRef:
