@@ -30,14 +30,9 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: erlmaster
+  name: master
 spec:
   selector:
     app: master
   ports:
-  - name: epmd
-    port: 4369
-    targetPort: 4369
-  - name: erlnode
-    port: 20000
-    targetPort: 20000
+  - port: 4000

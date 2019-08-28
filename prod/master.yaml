@@ -31,6 +31,8 @@ spec:
             secretKeyRef:
               name: misc
               key: secret-key-base
+        - name: USE_PROXY_PROTOCOL
+          value: "1"
         - name: ERL_NODE_NAME
           valueFrom:
             fieldRef:
@@ -47,7 +49,7 @@ metadata:
   name: master
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
-    # service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+    service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
     service.beta.kubernetes.io/do-loadbalancer-certificate-id: 94641cff-a3fa-4baa-ae57-5045142307c2
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"

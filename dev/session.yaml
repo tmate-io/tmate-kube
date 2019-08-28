@@ -55,7 +55,12 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: testmaster
+  name: session
 spec:
-  type: ExternalName
-  externalName: ssh.tmate.io
+  selector:
+    app: session
+  ports:
+  - port: 2200
+    name: ssh
+  - port: 4001
+    name: http
