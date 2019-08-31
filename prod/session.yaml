@@ -129,7 +129,7 @@ metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: c6e6bf23-5a0e-4c9b-8fde-bb32106cb6be
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: f5acbd44-f110-4942-9cec-7cc1fb58a34a
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
 spec:
   selector:

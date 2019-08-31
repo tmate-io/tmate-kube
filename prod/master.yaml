@@ -42,12 +42,12 @@ spec:
             secretKeyRef:
               name: misc
               key: wsapi_key
-        - name: PG_URI:
+        - name: PG_URI
           valueFrom:
             secretKeyRef:
               name: pg
               key: pg_uri
-        - name: PG_SSL_CA_CERT:
+        - name: PG_SSL_CA_CERT
           value: /etc/ssl/pg/pg_ca.crt
         - name: ERL_NODE_NAME
           valueFrom:
@@ -70,7 +70,7 @@ metadata:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: 94641cff-a3fa-4baa-ae57-5045142307c2
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: f5acbd44-f110-4942-9cec-7cc1fb58a34a
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
