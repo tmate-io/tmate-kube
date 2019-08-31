@@ -40,9 +40,6 @@ spec:
       - name: secret-ssh-keys
         secret:
           secretName: ssh-keys
-      - name: secret-ssl-cert
-        secret:
-          secretName: ssl-cert
       - name: tmate-unix-sockets
         emptyDir: {}
       containers:
@@ -117,8 +114,6 @@ spec:
         - containerPort: 4002
           name: daemon
         volumeMounts:
-        - name: secret-ssl-cert
-          mountPath: /etc/ssl/tmate
         - name: tmate-unix-sockets
           mountPath: /tmp/tmate/sessions
 ---
