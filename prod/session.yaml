@@ -48,7 +48,6 @@ spec:
         securityContext:
           capabilities:
             add: [SYS_ADMIN] # needed to spawn containers (CLONE_NEWPID, etc.)
-        args: ['-v']
         env:
         - name: USE_PROXY_PROTOCOL
           value: "1"
@@ -56,6 +55,8 @@ spec:
           value: "1"
         - name: SSH_KEYS_PATH
           value: /etc/tmate-keys
+        - name: SSH_PORT_ADVERTIZE
+          value: "22"
         - name: SSH_HOSTNAME
           valueFrom:
             configMapKeyRef:
@@ -123,13 +124,14 @@ metadata:
   name: session
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: f5acbd44-f110-4942-9cec-7cc1fb58a34a
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "10"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: e119b987-4e70-44eb-a577-ce49d50d668a
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
 spec:
   selector:
     app: session
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
   - name: ssh
     port: 22

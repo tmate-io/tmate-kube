@@ -2,7 +2,7 @@
 set -e
 
 MASTER_HOST=master-nyc3.tmate.io
-USER_FACING_HOST=staging.tmate.io
+USER_FACING_HOST=tmate.io
 
 usage() {
   echo "Usage: $0 HOSTNAME"

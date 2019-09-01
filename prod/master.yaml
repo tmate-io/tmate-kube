@@ -69,14 +69,15 @@ metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "60"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: f5acbd44-f110-4942-9cec-7cc1fb58a34a
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "10"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: e119b987-4e70-44eb-a577-ce49d50d668a
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
   selector:
     app: master
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
   - name: http
     port: 80
