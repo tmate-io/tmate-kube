@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: master
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9100'
+        prometheus.io/path: '/metrics'
     spec:
       volumes:
       - name: secret-pg
@@ -24,6 +28,8 @@ spec:
         ports:
         - containerPort: 4000
           name: http
+        - containerPort: 9100
+          name: http-metrics
         env:
         - name: MASTER_BASE_URL
           valueFrom:
@@ -47,6 +53,8 @@ spec:
             secretKeyRef:
               name: pg
               key: pg_uri
+        - name: PG_POOLSIZE
+          value: "10"
         - name: PG_SSL_CA_CERT
           value: /etc/ssl/pg/pg_ca.crt
         - name: ERL_NODE_NAME

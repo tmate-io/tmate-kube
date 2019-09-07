@@ -20,21 +20,9 @@ spec:
         ports:
         - containerPort: 4000
           name: http
-        - containerPort: 4080
-          name: http-static
-        - containerPort: 4100
+        - containerPort: 9100
           name: metrics
         - containerPort: 4369
           name: epmd
         - containerPort: 20000
           name: erlnode
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: master
-spec:
-  selector:
-    app: master
-  ports:
-  - port: 4000
