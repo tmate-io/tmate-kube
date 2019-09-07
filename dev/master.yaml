@@ -22,6 +22,8 @@ spec:
           name: http
         - containerPort: 4080
           name: http-static
+        - containerPort: 4100
+          name: metrics
         - containerPort: 4369
           name: epmd
         - containerPort: 20000

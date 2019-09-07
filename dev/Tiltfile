@@ -3,9 +3,10 @@ k8s_yaml('session.yaml')
 k8s_yaml('master.yaml')
 k8s_yaml('postgres.yaml')
 
- # N:N format due to bug in tilt. The 4001 port goes to the 2200 one otherwise.
+# Lists of ports are broken. When having [P1, P2, P3], P2 and P3 get forwarded
+# to P1. Unless in the N:N format.
 k8s_resource('session', port_forwards=['2200:2200', '4001:4001'])
-k8s_resource('master', port_forwards=[4000, 4080])
+k8s_resource('master', port_forwards=['4000:4000', '4100:4100'])
 k8s_resource('postgres', port_forwards=[5432])
 
 docker_build('tmate/tmate-ssh-server', '../../tmate-ssh-server',
