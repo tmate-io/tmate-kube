@@ -1,0 +1,2 @@
+kubectl exec -it deploy/master sh
+mix ecto.create ecto.migrate
