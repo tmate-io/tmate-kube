@@ -1,0 +1,11 @@
+controller:
+  service:
+    annotations:
+      service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "10"
+      service.beta.kubernetes.io/do-loadbalancer-certificate-id: 024a32a2-336b-440e-9090-6315b7c02842
+      service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+      # XXX fluentd breaks with SSL_connect returned=1 errno=0 state=error: tlsv1 alert protocol version (OpenSSL::SSL::SSLError)
+      #service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
+    targetPorts:
+      https: 80

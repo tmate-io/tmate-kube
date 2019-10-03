@@ -1,0 +1,6 @@
+kubectl --namespace kube-system create -f tiller-rbac.yaml
+helm init --service-account tiller --history-max 200
+helm install --namespace nginx-ingress -f ./nginx-values.yaml stable/nginx-ingress
+
+updating values:
+helm upgrade plinking-unicorn -f ./nginx-values.yaml stable/nginx-ingress
