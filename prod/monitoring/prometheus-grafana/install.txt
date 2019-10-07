@@ -1,5 +1,6 @@
 Use git clone https://github.com/do-community/doks-monitoring.git
 Add "- --storage.tsdb.retention.size=15GB" in args list in prometheus-statefulset.yaml
+Also add "- --web.enable-admin-api" to allow cleanup of time series via admin API
 Follow install instructions
 kubectl port-forward --namespace monitoring service/mon-grafana 3000:80 (or setup ingress)
 Make graphs from the two .json files
