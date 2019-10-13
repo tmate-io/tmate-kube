@@ -55,7 +55,7 @@ spec:
           value: "1"
         - name: SSH_KEYS_PATH
           value: /etc/tmate-keys
-        - name: SSH_PORT_ADVERTIZE
+        - name: SSH_PORT_ADVERTISE
           value: "22"
         - name: SSH_HOSTNAME
           valueFrom:
