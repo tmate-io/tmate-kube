@@ -2,7 +2,7 @@
 set -ex
 
 ROOT="tmate.io"
-SUBDOMAINS="staging master-nyc3 nyc1 nyc3 sfo2 sgp1 lon1 tor1"
+SUBDOMAINS="staging master-nyc3 nyc1 nyc3 sfo2 sgp1 lon1 tor1 elasticsearch kibana grafana prometheus"
 
 function usage {
   echo "Usage: $0 CERT_NAME"
