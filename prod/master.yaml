@@ -44,7 +44,7 @@ spec:
               key: secret_key_base
         - name: USE_PROXY_PROTOCOL
           value: "1"
-        - name: MASTER_WSAPI_KEY
+        - name: INTERNAL_API_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: misc

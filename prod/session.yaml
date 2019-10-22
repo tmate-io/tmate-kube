@@ -95,7 +95,7 @@ spec:
             configMapKeyRef:
               name: config
               key: user_facing_base_url
-        - name: MASTER_WSAPI_KEY
+        - name: INTERNAL_API_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: misc
