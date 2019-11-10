@@ -107,7 +107,7 @@ spec:
             - --cluster.listen-address=$(POD_IP):6783
             - --cluster.peer=mon-alertmanager-0.mon-alertmanager-operated.monitoring.svc:6783
             - --cluster.peer=mon-alertmanager-1.mon-alertmanager-operated.monitoring.svc:6783
-            - --log.level=debug
+            - --log.level=info
           env:
           - name: POD_IP
             valueFrom:
@@ -141,10 +141,10 @@ spec:
             # To learn more about resource limits and requests, and how to tune them, 
             # consult https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container
             limits:
-              cpu: 10m
+              cpu: 100m
               memory: 50Mi
             requests:
-              cpu: 10m
+              cpu: 100m
               memory: 50Mi
       volumes:
         - name: config-volume
@@ -457,26 +457,30 @@ rules:
   - persistentvolumes
   - namespaces
   - endpoints
-  verbs: ["list", "watch"]
+  verbs: ["update", "get", "list", "watch"]
+- apiGroups: ["policy"]
+  resources:
+  - poddisruptionbudgets
+  verbs: ["update", "get", "list", "watch"]
 - apiGroups: ["extensions"]
   resources:
   - daemonsets
   - deployments
   - replicasets
-  verbs: ["list", "watch"]
+  verbs: ["update", "get", "list", "watch"]
 - apiGroups: ["apps"]
   resources:
   - statefulsets
-  verbs: ["list", "watch"]
+  verbs: ["update", "get", "list", "watch"]
 - apiGroups: ["batch"]
   resources:
   - cronjobs
   - jobs
-  verbs: ["list", "watch"]
+  verbs: ["update", "get", "list", "watch"]
 - apiGroups: ["autoscaling"]
   resources:
   - horizontalpodautoscalers
-  verbs: ["list", "watch"]
+  verbs: ["update", "get", "list", "watch"]
 ---
 # Binds the ClusterRole to the `kube-state-metrics` Service Account, 
 # granting it the permissions defined in the `ClusterRole`.
@@ -599,7 +603,7 @@ metadata:
     app.kubernetes.io/component: node-exporter
 spec:
   updateStrategy:
-    type: OnDelete
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -633,10 +637,10 @@ spec:
           # Resource limits and requests of `10m` of CPU and `50Mi` of memory
           resources:
             limits:
-              cpu: 10m
+              cpu: 30m
               memory: 50Mi
             requests:
-              cpu: 10m
+              cpu: 30m
               memory: 50Mi
       # The `hostNetwork` and `hostPID` Pod Security parameters are set to `true` to allow `node-exporter` 
       # to  access the host process ID namespace and Node network namespace, which are required for scraping Node metrics
@@ -837,7 +841,7 @@ data:
     \     \"runbook_url\": \"https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh\"\n
     \   \"expr\": |\n      100 * sum(increase(container_cpu_cfs_throttled_periods_total{container_name!=\"\",
     }[5m])) by (container_name, pod_name, namespace)\n        /\n      sum(increase(container_cpu_cfs_periods_total{}[5m]))
-    by (container_name, pod_name, namespace)\n        > 25 \n    \"for\": \"15m\"\n
+    by (container_name, pod_name, namespace)\n        > 50 \n    \"for\": \"15m\"\n
     \   \"labels\": \n      \"severity\": \"warning\"\n- \"name\": \"kubernetes-storage\"\n
     \ \"rules\": \n  - \"alert\": \"KubePersistentVolumeUsageCritical\"\n    \"annotations\":
     \n      \"message\": \"The PersistentVolume claimed by {{ $labels.persistentvolumeclaim
