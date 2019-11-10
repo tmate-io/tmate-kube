@@ -48,6 +48,12 @@ spec:
             value: "es-cluster-0.elasticsearch,es-cluster-1.elasticsearch"
           - name: cluster.initial_master_nodes
             value: "es-cluster-0,es-cluster-1"
+          - name: cluster.routing.allocation.disk.watermark.low
+            value: "500mb"
+          - name: cluster.routing.allocation.disk.watermark.high
+            value: "300mb"
+          - name: cluster.routing.allocation.disk.watermark.flood_stage
+            value: "100mb"
           - name: ES_JAVA_OPTS
             value: "-Xms300m -Xmx300m"
       initContainers:

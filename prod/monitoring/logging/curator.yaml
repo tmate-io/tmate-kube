@@ -1,0 +1,70 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: curator
+spec:
+  # every 10mins
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 60
+      template:
+        spec:
+          containers:
+          - name: curator
+            image: bobrik/curator:5.7.6
+            command: [curator, --config, /etc/curator/config.yaml, /etc/curator/action-file.yaml]
+            volumeMounts:
+            - mountPath: /etc/curator/
+              name: curator-config
+          volumes:
+          - name: curator-config
+            configMap:
+              name: curator-config
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: curator-config
+  namespace: logging
+data:
+  config.yaml: |-
+    client:
+      hosts:
+      - es-cluster-0.elasticsearch
+      - es-cluster-1.elasticsearch
+      timeout: 120
+    logging:
+      loglevel: INFO
+  action-file.yaml: |-
+    actions:
+      1:
+        action: index_settings
+        options:
+          ignore_empty_list: true
+          index_settings:
+            index:
+              translog:
+                flush_threshold_size: "10mb"
+                retention:
+                  size: "10mb"
+                  age: "1h"
+        filters:
+        - filtertype: none
+
+      2:
+        action: delete_indices
+        options:
+          ignore_empty_list: true
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: logstash-
+        - filtertype: space
+          # We have a low translog size, and our low watermark is set to 500mb
+          # We still prune conservatively to avoid upsetting the elasticsearch gods with disk space
+          disk_space: 14 # this is in GB
+          use_age: true
+          source: creation_date

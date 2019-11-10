@@ -1,0 +1,7 @@
+Interesting things to keep an eye on:
+https://elasticsearch.tmate.io/_cat/allocation?v
+https://elasticsearch.tmate.io/_cat/shards?v
+https://elasticsearch.tmate.io/_cat/indices?v
+
+If getting fobbiden readonly errors, run:
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
