@@ -55,7 +55,7 @@ spec:
           - name: cluster.routing.allocation.disk.watermark.flood_stage
             value: "100mb"
           - name: ES_JAVA_OPTS
-            value: "-Xms300m -Xmx300m"
+            value: "-Xms700m -Xmx700m"
       initContainers:
       - name: fix-permissions
         image: busybox
