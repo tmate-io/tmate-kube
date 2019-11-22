@@ -1,5 +1,5 @@
 Use git clone https://github.com/do-community/doks-monitoring.git
-Add "- --storage.tsdb.retention.size=15GB" in args list in prometheus-statefulset.yaml
+Add "- --storage.tsdb.retention.size=12GB" in args list in prometheus-statefulset.yaml
 Also add "- --web.enable-admin-api" to allow cleanup of time series via admin API
 Apply commit dc4909e955
 Follow install instructions

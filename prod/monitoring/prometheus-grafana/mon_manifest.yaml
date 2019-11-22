@@ -1579,7 +1579,7 @@ spec:
           args:
             - --config.file=/etc/config/prometheus.yaml
             - --storage.tsdb.path=/data
-            - --storage.tsdb.retention.size=15GB
+            - --storage.tsdb.retention.size=12GB
             - --web.enable-admin-api
             - --web.console.libraries=/etc/prometheus/console_libraries
             - --web.console.templates=/etc/prometheus/consoles
