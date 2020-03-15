@@ -72,6 +72,8 @@ spec:
             secretKeyRef:
               name: misc
               key: mailgun_api_key
+        - name: MAILGUN_DOMAIN
+          value: "mail.tmate.io"
         volumeMounts:
         - name: secret-pg
           mountPath: /etc/ssl/pg
