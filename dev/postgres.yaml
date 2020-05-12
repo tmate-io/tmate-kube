@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres   
     spec:
       volumes:
         - name: pgdata
@@ -21,11 +21,14 @@ spec:
       containers:
         - name: postgres
           image: postgres:11-alpine
+          envFrom:
+            - configMapRef:
+                name: postgres-config-demo
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: pgdata
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data          
 ---
 kind: Service
 apiVersion: v1
@@ -63,3 +66,12 @@ spec:
     requests:
       storage: 100Mi
   storageClassName: standard
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-config-demo
+  labels:
+    app: postgres
+data:
+  POSTGRES_HOST_AUTH_METHOD: trust
