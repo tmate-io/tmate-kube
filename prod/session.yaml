@@ -45,7 +45,7 @@ spec:
         emptyDir: {}
       containers:
       - name: tmate-ssh-server
-        image: tmate/tmate-ssh-server:latest
+        image: tmate/tmate-ssh-server:prod
         # args: [-v]
         securityContext:
           capabilities:

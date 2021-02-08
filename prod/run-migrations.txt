@@ -1,2 +1,3 @@
+$ bin/tmate remote_console
 # run twice. first time will fail with cannot find migrations
 Mix.Task.rerun("ecto.migrate", ["-r", Tmate.Repo, "--migrations-path", "./lib/tmate-0.1.1/priv/repo/migrations"])
